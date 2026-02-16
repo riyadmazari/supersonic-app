@@ -9,8 +9,6 @@ replace the body of `_call_llm` — no changes needed in routes or schemas.
 """
 
 import datetime
-import os
-import re
 from typing import Any
 
 import google.generativeai as genai
@@ -19,8 +17,6 @@ from app.core.config import settings
 
 # Initialize Gemini Client
 genai.configure(api_key=settings.GEMINI_API_KEY)
-# We choose gemini-2.0-flash for speed and project efficiency
-model_base = genai.GenerativeModel('gemini-2.0-flash')
 
 
 # ---- internal helper (intelligent analysis) ----

@@ -638,14 +638,10 @@ if (addTaskBottomBtn) {
 document.getElementById('task-edit-form').addEventListener('submit', updateTask);
 
 toggleChatBtn.addEventListener('click', () => {
-    console.log('AI Assistant button clicked. Current chat state:', chatContainer.classList.contains('hidden'));
     chatContainer.classList.toggle('hidden');
-    console.log('New chat state:', chatContainer.classList.contains('hidden'));
 
     if (!chatContainer.classList.contains('hidden')) {
         chatInput.focus();
-        // If chat is open, maybe hide AI summary box to save space?
-        // document.getElementById('ai-section').classList.add('hidden');
     }
 });
 
@@ -695,9 +691,3 @@ function appendMessage(text, sender) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Show chat toggle when a project is selected
-function showChatToggle() {
-    if (toggleChatBtn) {
-        toggleChatBtn.classList.remove('hidden');
-    }
-}

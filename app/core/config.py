@@ -7,9 +7,6 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    AI_API_BASE_URL: str = "http://localhost:8000/ai"
-    AI_API_KEY: str = "not-needed-for-stub"
-    OPENAI_API_KEY: str | None = None
     GEMINI_API_KEY: str | None = None
 
     class Config:
