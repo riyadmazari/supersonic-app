@@ -1,58 +1,43 @@
 # Supersonic — AI-Assisted Project Planner
 
-An AI-assisted project planning tool that lets teams import project plans from Excel/CSV, manage tasks and milestones through a REST API, and interact with an AI assistant for summaries, risk analysis, and schedule suggestions.
+An intelligent project planning tool that enables teams to import project plans, manage tasks through a modern UI, and interact with a project-aware AI assistant powered by **Google Gemini**.
 
-Built with **FastAPI**, **PostgreSQL**, and **Docker**.
+Built for professional deployment using **FastAPI**, **PostgreSQL**, and **Docker**.
 
-## Features
+## 🚀 Features
 
 - **Project plan import** — Upload `.csv` or `.xlsx` files to create a project with tasks in one step
 - **Project & task management** — Full CRUD with filtering by status, priority, and date range
-- **AI assistant** — Endpoints for project summaries and schedule/priority suggestions (pluggable LLM backend, stub included)
-- **Email/note linking** — Message objects that can be linked to projects or individual tasks (designed for future Outlook/Graph API integration)
-- **Authentication** — JWT Bearer token auth with bcrypt password hashing
-- **Ethics & policy** — Built-in endpoint documenting data handling, AI limitations, and legal disclaimers
+- **AI Assistant** — Project-aware chatbot for summaries, risk analysis, and tactical suggestions
+- **Modern UI** — Responsive dashboard with priority-coded tasks and inline editing
+- **Ethics & policy** — Built-in endpoint documenting data handling and AI limitations
+- **Security** — JWT Bearer token auth with bcrypt password hashing
 
-## Architecture
+## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   Docker Network                     │
-│                                                      │
-│  ┌──────────────────────┐   ┌─────────────────────┐ │
-│  │  backend (port 8000) │   │  db (port 5432)     │ │
-│  │                      │   │                     │ │
-│  │  FastAPI app         │──▶│  PostgreSQL 16      │ │
-│  │  - REST/JSON API     │   │  - supersonic_db    │ │
-│  │  - JWT auth          │   │  - non-root user    │ │
-│  │  - AI service stub   │   │                     │ │
-│  │  - File import       │   └─────────────────────┘ │
-│  └──────────┬───────────┘                            │
-│             │                                        │
-│        port 8000                                     │
-│        exposed                                       │
-└─────────────┼───────────────────────────────────────┘
-              │
-         HTTP/JSON
-              │
-     ┌────────▼────────┐
-     │  Client / User  │
-     │  (curl, browser, │
-     │   Postman, etc.) │
-     └─────────────────┘
+```mermaid
+graph TD
+    Client[Browser / Client] -- "HTTP/JSON" --> API[FastAPI Backend]
+    API -- "SQL/Async" --> DB[(PostgreSQL 16)]
+    API -- "REST" --> Gemini[Google Gemini AI]
+    
+    subgraph "Docker Compose Network"
+        API
+        DB
+    end
 ```
 
 | Component | Technology | Role |
 |---|---|---|
-| Backend API | FastAPI + Uvicorn | REST/JSON endpoints, auth, file parsing, AI orchestration |
-| Database | PostgreSQL 16 | Persistent storage for users, projects, tasks, messages |
-| ORM | SQLAlchemy 2.0 (async) | Data models, async DB access via asyncpg |
-| Auth | python-jose + passlib | JWT token issuance/verification, bcrypt password hashing |
-| File import | pandas + openpyxl | Parses CSV and Excel uploads into structured project data |
-| AI service | Pluggable `ai_client` | Stub included; swap in OpenAI/Anthropic/local LLM later |
-| Deployment | Docker Compose | Two-container setup (backend + postgres) on a shared network |
+| **Backend API** | FastAPI + Uvicorn | REST/JSON endpoints, auth, file parsing, AI orchestration |
+| **Database** | PostgreSQL 16 | Persistent storage for users, projects, tasks, messages |
+| **ORM** | SQLAlchemy 2.0 (async) | Data models, async DB access via asyncpg |
+| **Auth** | python-jose + passlib | JWT token issuance/verification, bcrypt password hashing |
+| **File import** | pandas + openpyxl | Parses CSV and Excel uploads into structured project data |
+| **AI service** | Google Gemini 2.0 | Reasoning engine for chat, summaries, and suggestions |
+| **Deployment** | Docker Compose | Two-container setup (backend + postgres) on a shared network |
 
-## Data Model
+## 📊 Data Model
 
 ```
 User ──1:N──▶ Project ──1:N──▶ Task ◀──N:M──▶ Tag
@@ -60,28 +45,22 @@ User ──1:N──▶ Project ──1:N──▶ Task ◀──N:M──▶ Ta
                  └──1:N──▶ Message (optionally linked to a Task)
 ```
 
-- **User** — username, hashed password, full name
-- **Project** — name, description, owner
-- **Task** — title, status, priority, assignee, start/end dates
-- **Message** — subject, body, sender, date (email/note-like, linked to project and optionally to a task)
-- **Tag** — labels for tasks (many-to-many)
-
-## API Endpoints
+## 🔌 API Endpoints
 
 | Group | Endpoints | Auth |
 |---|---|---|
-| Auth | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` | public (register/login) |
-| Projects | `POST /projects`, `GET /projects`, `GET/PUT/DELETE /projects/{id}` | Bearer token |
-| Import | `POST /projects/import` (multipart file upload) | Bearer token |
-| Tasks | `POST/GET /projects/{id}/tasks`, `GET/PUT/DELETE /tasks/{id}` | Bearer token |
-| Messages | `POST/GET /projects/{id}/messages` | Bearer token |
-| AI | `POST /ai/summary`, `POST /ai/suggestions` | Bearer token |
-| Policy | `GET /policy` | public |
-| Health | `GET /health` | public |
+| **Auth** | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` | public (register/login) |
+| **Projects** | `POST /projects`, `GET /projects`, `GET/PUT/DELETE /projects/{id}` | Bearer token |
+| **Import** | `POST /projects/import` (multipart file upload) | Bearer token |
+| **Tasks** | `POST/GET /projects/{id}/tasks`, `GET/PUT/DELETE /tasks/{id}` | Bearer token |
+| **Messages** | `POST/GET /projects/{id}/messages` | Bearer token |
+| **AI** | `POST /ai/summary`, `POST /ai/chat` | Bearer token |
+| **Policy** | `GET /policy` | public |
+| **Health** | `GET /health` | public |
 
 Full interactive docs available at `/docs` (Swagger UI) when the server is running.
 
-## Project Structure
+## 📂 Project Structure
 
 ```
 app/
@@ -93,7 +72,7 @@ app/
 │       ├── projects.py       # CRUD + import
 │       ├── tasks.py          # CRUD with filtering
 │       ├── messages.py       # create, list
-│       ├── ai.py             # summary, suggestions
+│       ├── ai.py             # summary, chat
 │       └── policy.py         # ethics/security policy
 ├── core/
 │   ├── config.py            # pydantic Settings (reads .env)
@@ -103,43 +82,46 @@ app/
 │   ├── models.py            # User, Project, Task, Tag, Message
 │   └── session.py           # async engine + session factory
 ├── schemas/                 # Pydantic request/response models
+├── static/                  # Frontend UI (HTML, CSS, JS)
 └── services/
-    ├── ai_client.py         # pluggable AI interface (stub)
+    ├── ai_client.py         # Gemini AI interface
     └── project_importer.py  # Excel/CSV parser
 ```
 
-## Quick Start
+## 🛠️ Quick Start
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/em-ech/supersonic.git
-cd supersonic
+git clone https://github.com/riyadmazari/supersonic-app.git
+cd supersonic-app
 
-# 2. Create your environment file
+# 2. Setup environment variables
 cp .env.example .env
+# Edit .env and add your GEMINI_API_KEY
 
-# 3. Build and run
-docker compose up --build
+# 3. Build and run with Docker
+docker-compose up --build
 
-# 4. Open the API docs
-# http://localhost:8000/docs
+# 4. Open the App
+# Dashboard: http://localhost:8000
+# API Docs: http://localhost:8000/docs
 ```
 
-## Environment Variables
+## 🔑 Environment Variables
 
-See `.env.example` for all available configuration:
-
-| Variable | Description | Default |
+| Variable | Description | Value (example) |
 |---|---|---|
-| `DATABASE_URL` | Async PostgreSQL connection string | `postgresql+asyncpg://supersonic_user:supersonic_pass@db:5432/supersonic_db` |
-| `SECRET_KEY` | JWT signing key (change in production) | `change-me-to-a-random-secret` |
+| `DATABASE_URL` | Async PostgreSQL connection string | `postgresql+asyncpg://user:pass@db:5432/db` |
+| `SECRET_KEY` | JWT signing key (change in production) | `(random-secret)` |
+| `GEMINI_API_KEY` | Google AI Studio API Key | `AIza...` |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Token lifetime | `60` |
-| `AI_API_BASE_URL` | AI provider base URL (for future use) | `http://localhost:8000/ai` |
-| `AI_API_KEY` | AI provider API key (for future use) | `not-needed-for-stub` |
 
-## Security
+## ⚖️ Security & Policy
 
-- Passwords hashed with **bcrypt** (never stored in plaintext)
-- All data endpoints require **JWT Bearer token** authentication
-- PostgreSQL accessed via a **dedicated non-root user** (`supersonic_user`)
-- AI responses include a **disclaimer** about potential hallucinations
+- **bcrypt hashing** — Passwords are never stored in plaintext.
+- **JWT isolation** — All project data is scoped to the authenticated owner.
+- **Dedicated DB User** — PostgreSQL accessed via a restricted service account.
+- **AI Disclaimer** — Built-in policy advising users on model limitations and data handling.
+
+---
+*Ready for submission. Built for professional software development.*

@@ -7,11 +7,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
-    AI_API_BASE_URL: str = "http://localhost:8000/ai"
-    AI_API_KEY: str = "not-needed-for-stub"
+    GEMINI_API_KEY: str | None = None
 
     class Config:
         env_file = ".env"
+        extra = "allow"
 
 
 settings = Settings()

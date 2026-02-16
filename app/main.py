@@ -29,6 +29,15 @@ app.include_router(ai.router)
 app.include_router(policy.router)
 
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+@app.get("/")
+async def read_root():
+    return FileResponse('app/static/index.html')
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}

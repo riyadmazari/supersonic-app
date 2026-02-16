@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supersonic | AI Project Planner</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/chat.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar hidden" id="navbar">
+            <div class="container container-nav">
+                <div class="nav-brand">
+                    <ion-icon name="rocket" style="color: var(--accent-primary)"></ion-icon>
+                    <span>SUPERSONIC</span>
+                </div>
+                <div class="nav-links">
+                    <span id="user-name">User</span>
+                    <button class="btn btn-secondary btn-sm" id="logout-btn">
+                        <ion-icon name="log-out-outline"></ion-icon> Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="auth-container">
+            <div class="auth-card">
+                <div class="nav-brand" style="justify-content: center; margin-bottom: 2rem;">
+                    <ion-icon name="rocket" style="font-size: 2rem; color: var(--accent-primary)"></ion-icon>
+                    <span style="font-size: 2rem;">SUPERSONIC</span>
+                </div>
+
+                <div class="auth-tabs">
+                    <div class="auth-tab active" data-tab="login">Login</div>
+                    <div class="auth-tab" data-tab="register">Register</div>
+                </div>
+
+                <form id="auth-form" class="flex-col">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <div id="full-name-field" class="hidden">
+                        <input type="text" id="full-name" placeholder="Full Name">
+                    </div>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit" class="btn btn-primary full-width" id="auth-submit-btn">
+                        Login <ion-icon name="arrow-forward"></ion-icon>
+                    </button>
+                    <p id="auth-error" style="color: var(--danger); font-size: 0.9rem; text-align: center;"
+                        class="hidden"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard-screen" class="dashboard hidden">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="flex-row justify-between items-center mb-4">
+                    <h3>Projects</h3>
+                    <div class="flex-row" style="gap: 0.5rem;">
+                        <button class="btn btn-secondary btn-sm" id="import-project-btn" title="Import from CSV/Excel">
+                            <ion-icon name="cloud-upload"></ion-icon>
+                        </button>
+                        <button class="btn btn-primary btn-sm" id="new-project-btn">
+                            <ion-icon name="add"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+                <div id="project-list" class="project-list">
+                    <!-- Projects injected here -->
+                    <div class="project-item active">Loading...</div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content" id="main-content">
+                <div id="empty-state" class="hidden"
+                    style="text-align: center; margin-top: 4rem; color: var(--text-secondary);">
+                    <ion-icon name="folder-open-outline" style="font-size: 4rem; opacity: 0.5;"></ion-icon>
+                    <h2>Select a project</h2>
+                    <p>Choose a project from the sidebar to view details.</p>
+                </div>
+
+                <div id="project-view" class="hidden">
+                    <header class="flex-row justify-between items-start mb-4">
+                        <div>
+                            <h1 id="project-title">Project Name</h1>
+                            <p id="project-desc" style="color: var(--text-secondary);">Project description goes here...
+                            </p>
+                        </div>
+                        <div class="flex-row">
+                            <button class="btn btn-secondary" id="ai-summary-btn">
+                                <ion-icon name="sparkles"></ion-icon> AI Summary
+                            </button>
+                            <button class="btn btn-secondary" id="ai-suggestions-btn" style="margin-left: 0.5rem;">
+                                <ion-icon name="bulb-outline"></ion-icon> Tips
+                            </button>
+                            <button class="btn btn-primary" id="new-task-btn" style="margin: 0 0.5rem;">
+                                <ion-icon name="add-circle"></ion-icon> New Task
+                            </button>
+                            <button class="btn btn-secondary" id="toggle-chat-panel">
+                                <ion-icon name="chatbubbles-outline"></ion-icon> AI Assistant
+                            </button>
+                        </div>
+                    </header>
+
+                    <!-- AI Summary Section -->
+                    <div id="ai-section" class="hidden">
+                        <div class="ai-summary-box">
+                            <div class="ai-badge">
+                                <ion-icon name="logo-electron"></ion-icon> AI Analysis
+                            </div>
+                            <div id="ai-content" class="ai-content">Loading AI insights...</div>
+                        </div>
+                    </div>
+
+                    <!-- Project Content Grid (Tasks + Embedded Chat) -->
+                    <div class="project-grid">
+                        <div class="tasks-section" id="tasks-section">
+                            <div id="tasks-container" class="tasks-container">
+                                <!-- Tasks injected here -->
+                            </div>
+                            <div id="empty-tasks" class="empty-state hidden">
+                                <ion-icon name="checkbox-outline"></ion-icon>
+                                <h3>No tasks yet</h3>
+                                <p>Create your first task to get started</p>
+                            </div>
+                            <button class="btn btn-primary" id="add-task-bottom-btn"
+                                style="width: 100%; margin-top: 1rem;">
+                                <ion-icon name="add-circle"></ion-icon> Create New Task
+                            </button>
+                        </div>
+
+                        <!-- Embedded AI Chatbot -->
+                        <div id="ai-chat-container" class="ai-chat-container hidden">
+                            <div class="chat-header">
+                                <div class="flex-row items-center">
+                                    <ion-icon name="sparkles" class="mr-2"></ion-icon>
+                                    <span>Project Assistant</span>
+                                </div>
+                                <button id="close-chat" class="btn btn-sm btn-secondary">
+                                    <ion-icon name="close"></ion-icon>
+                                </button>
+                            </div>
+                            <div id="chat-messages" class="chat-messages">
+                                <div class="message assistant">
+                                    Hello! I'm your AI project assistant. Ask me anything about your tasks or project
+                                    health.
+                                </div>
+                            </div>
+                            <form id="chat-form" class="chat-input-area">
+                                <input type="text" id="chat-input" placeholder="Ask a question..." required>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <ion-icon name="send"></ion-icon>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modals -->
+    <!-- Import Project Modal -->
+    <div id="modal-import" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Project from File</h2>
+                <button class="close-modal">
+                    <ion-icon name="close"></ion-icon>
+                </button>
+            </div>
+            <form id="import-form">
+                <div class="file-upload-area" id="file-upload-area">
+                    <ion-icon name="cloud-upload-outline" style="font-size: 3rem; opacity: 0.5;"></ion-icon>
+                    <p>Drag and drop or click to select CSV/Excel</p>
+                    <input type="file" id="import-file" accept=".csv,.xlsx,.xls" style="display: none;">
+                    <p id="selected-filename" style="color: var(--accent-primary); margin-top: 0.5rem;"></p>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <ion-icon name="cloud-upload"></ion-icon> Upload and Import
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="modal-project" class="modal">
+        <div class="modal-content">
+            <h2 class="mb-4">New Project</h2>
+            <form id="project-form" class="flex-col">
+                <input type="text" id="new-proj-name" placeholder="Project Name" required>
+                <textarea id="new-proj-desc" placeholder="Description" rows="3"></textarea>
+                <div class="flex-row justify-between mt-4">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Task Modal -->
+    <div id="modal-task" class="modal">
+        <div class="modal-content">
+            <h2 class="mb-4">New Task</h2>
+            <form id="task-form" class="flex-col">
+                <input type="text" id="new-task-title" placeholder="Task Title" required>
+                <div class="flex-row">
+                    <select id="new-task-priority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                        <option value="critical">Critical Priority</option>
+                    </select>
+                    <select id="new-task-status">
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+                <input type="text" id="new-task-assignee" placeholder="Assignee (Optional)">
+                <div class="flex-row justify-between mt-4">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div id="modal-task-edit" class="modal">
+        <div class="modal-content">
+            <h2 class="mb-4">Edit Task</h2>
+            <form id="task-edit-form" class="flex-col">
+                <input type="hidden" id="edit-task-id">
+                <input type="text" id="edit-task-title" placeholder="Task Title" required>
+                <div class="flex-row">
+                    <select id="edit-task-priority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                        <option value="critical">Critical Priority</option>
+                    </select>
+                    <select id="edit-task-status">
+                        <option value="not_started">Not Started</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="blocked">Blocked</option>
+                    </select>
+                </div>
+                <input type="text" id="edit-task-assignee" placeholder="Assignee (Optional)">
+                <div class="flex-row justify-between mt-4">
+                    <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
