@@ -9,9 +9,12 @@ class Settings(BaseSettings):
 
     AI_API_BASE_URL: str = "http://localhost:8000/ai"
     AI_API_KEY: str = "not-needed-for-stub"
+    OPENAI_API_KEY: str | None = None
+    GEMINI_API_KEY: str | None = None
 
     class Config:
         env_file = ".env"
+        extra = "allow"
 
 
 settings = Settings()

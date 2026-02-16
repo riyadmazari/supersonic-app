@@ -1,0 +1,9 @@
+Project Name,Task Name,Status,Priority,Owner,Start Date,End Date,Description
+My Sample Project,Setup Development Environment,completed,high,John Doe,2024-01-01,2024-01-05,Install all required dependencies and tools
+My Sample Project,Design Database Schema,completed,critical,Jane Smith,2024-01-06,2024-01-10,Create ERD and define all tables
+My Sample Project,Build Authentication API,in_progress,critical,John Doe,2024-01-11,2024-01-20,Implement JWT-based auth with bcrypt
+My Sample Project,Create Frontend Components,in_progress,high,Alice Johnson,2024-01-15,2024-01-25,Build React components for UI
+My Sample Project,Write Unit Tests,not_started,medium,Bob Wilson,2024-01-21,2024-01-30,Achieve 80% code coverage
+My Sample Project,Deploy to Staging,not_started,high,Jane Smith,2024-02-01,2024-02-05,Set up CI/CD pipeline
+My Sample Project,Performance Testing,not_started,medium,,2024-02-06,2024-02-10,Load testing and optimization
+My Sample Project,Documentation,not_started,low,Alice Johnson,2024-02-11,2024-02-15,API docs and user guide

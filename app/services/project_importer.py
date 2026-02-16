@@ -14,9 +14,10 @@ Expected columns (case-insensitive, leading/trailing spaces stripped):
 
 from __future__ import annotations
 
+import datetime
 import io
 import uuid
-from typing import BinaryIO
+from typing import Any, BinaryIO
 
 import pandas as pd
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -43,6 +44,20 @@ def _parse_priority(raw: str | None) -> str:
     if raw and str(raw).strip().lower() in VALID_PRIORITIES:
         return str(raw).strip().lower()
     return "medium"
+
+
+def _to_py_datetime(val: Any) -> datetime.datetime | None:
+    """Convert pandas timestamp/NaT to standard python datetime/None."""
+    if pd.isna(val):
+        return None
+    if isinstance(val, (pd.Timestamp, datetime.datetime)):
+        # Ensure it's a standard datetime object
+        dt = val.to_pydatetime() if hasattr(val, "to_pydatetime") else val
+        # Ensure it has timezone if needed (the model uses timezone=True)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=datetime.timezone.utc)
+        return dt
+    return None
 
 
 async def import_file(
@@ -89,8 +104,8 @@ async def import_file(
             assignee=str(row["owner"]).strip() if pd.notna(row.get("owner")) else None,
             status=_parse_status(row.get("status")),
             priority=_parse_priority(row.get("priority")),
-            start_date=pd.to_datetime(row.get("start_date"), errors="coerce"),
-            end_date=pd.to_datetime(row.get("end_date"), errors="coerce"),
+            start_date=_to_py_datetime(pd.to_datetime(row.get("start_date"), errors="coerce")),
+            end_date=_to_py_datetime(pd.to_datetime(row.get("end_date"), errors="coerce")),
         )
         db.add(task)
 

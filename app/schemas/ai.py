@@ -12,6 +12,11 @@ class AISuggestionsRequest(BaseModel):
     prompt: str | None = Field(None, description="Optional user prompt, e.g. 'optimize schedule for next month'")
 
 
+class AIChatRequest(BaseModel):
+    project_id: uuid.UUID
+    message: str
+
+
 class AIResponse(BaseModel):
     result: str
     disclaimer: str = (
