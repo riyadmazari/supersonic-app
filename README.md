@@ -92,8 +92,8 @@ app/
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/em-ech/supersonic.git
-cd supersonic
+git clone https://github.com/riyadmazari/supersonic-app.git
+cd supersonic-app
 
 # 2. Setup environment variables
 cp .env.example .env
